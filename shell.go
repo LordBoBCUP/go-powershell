@@ -37,6 +37,7 @@ func New(backend backend.Starter) (Shell, error) {
 }
 
 func (s *shell) Execute(cmd string) (string, string, error) {
+	fmt.Println("Here")
 	if s.handle == nil {
 		return "", "", errors.Wrap(errors.New(cmd), "Cannot execute commands on closed shells.")
 	}
