@@ -44,13 +44,19 @@ func (s *shell) Execute(cmd string) (string, string, error) {
 	outBoundary := createBoundary()
 	errBoundary := createBoundary()
 
+	fmt.Println(cmd)
+
 	// wrap the command in special markers so we know when to stop reading from the pipes
 	full := fmt.Sprintf("%s; echo '%s'; [Console]::Error.WriteLine('%s')%s", cmd, outBoundary, errBoundary, newline)
+
+	fmt.Println(full)
 
 	_, err := s.stdin.Write([]byte(full))
 	if err != nil {
 		return "", "", errors.Wrap(errors.Wrap(err, cmd), "Could not send PowerShell command")
 	}
+
+	fmt.Println("Written to stdin")
 
 	// read stdout and stderr
 	sout := ""
@@ -58,7 +64,7 @@ func (s *shell) Execute(cmd string) (string, string, error) {
 
 	waiter := &sync.WaitGroup{}
 	waiter.Add(2)
-
+	fmt.Println("Starting Go Routines")
 	go streamReader(s.stdout, outBoundary, &sout, waiter)
 	go streamReader(s.stderr, errBoundary, &serr, waiter)
 
