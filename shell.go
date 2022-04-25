@@ -44,7 +44,7 @@ func (s *shell) Execute(cmd string) (string, string, error) {
 	outBoundary := createBoundary()
 	errBoundary := createBoundary()
 
-	fmt.Println(cmd)
+	fmt.Println("here", cmd)
 
 	// wrap the command in special markers so we know when to stop reading from the pipes
 	full := fmt.Sprintf("%s; echo '%s'; [Console]::Error.WriteLine('%s')%s", cmd, outBoundary, errBoundary, newline)
