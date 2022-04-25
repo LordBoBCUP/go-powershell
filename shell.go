@@ -72,9 +72,12 @@ func (s *shell) Execute(cmd string) (string, string, error) {
 	waiter.Wait()
 
 	if len(serr) > 0 {
+		fmt.Println("Returning error... why? ", serr)
 		return sout, serr, errors.Wrap(errors.New(cmd), serr)
 	}
 
+	fmt.Println("Returning sout and serr")
+	
 	return sout, serr, nil
 }
 
