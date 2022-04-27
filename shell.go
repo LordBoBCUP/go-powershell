@@ -37,15 +37,12 @@ func New(backend backend.Starter) (Shell, error) {
 }
 
 func (s *shell) Execute(cmd string) (string, string, error) {
-	fmt.Println("Here")
 	if s.handle == nil {
 		return "", "", errors.Wrap(errors.New(cmd), "Cannot execute commands on closed shells.")
 	}
 
 	outBoundary := createBoundary()
 	errBoundary := createBoundary()
-
-	fmt.Println("here", cmd)
 
 	// wrap the command in special markers so we know when to stop reading from the pipes
 	full := fmt.Sprintf("%s; echo '%s'; [Console]::Error.WriteLine('%s')%s", cmd, outBoundary, errBoundary, newline)
@@ -57,27 +54,21 @@ func (s *shell) Execute(cmd string) (string, string, error) {
 		return "", "", errors.Wrap(errors.Wrap(err, cmd), "Could not send PowerShell command")
 	}
 
-	fmt.Println("Written to stdin")
-
 	// read stdout and stderr
 	sout := ""
 	serr := ""
 
 	waiter := &sync.WaitGroup{}
 	waiter.Add(2)
-	fmt.Println("Starting Go Routines")
 	go streamReader(s.stdout, outBoundary, &sout, waiter)
 	go streamReader(s.stderr, errBoundary, &serr, waiter)
 
 	waiter.Wait()
 
 	if len(serr) > 0 {
-		fmt.Println("Returning error... why? ", serr)
 		return sout, serr, errors.Wrap(errors.New(cmd), serr)
 	}
 
-	fmt.Println("Returning sout and serr")
-	
 	return sout, serr, nil
 }
 

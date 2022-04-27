@@ -38,7 +38,6 @@ func NewSession(upstream Middleware, config *SessionConfig) (Middleware, error) 
 }
 
 func (s *session) Execute(cmd string) (string, string, error) {
-	fmt.Println(cmd)
 	return s.upstream.Execute(fmt.Sprintf("Invoke-Command -Session $%s -Script {%s}", s.name, cmd))
 }
 
